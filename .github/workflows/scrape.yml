@@ -1,0 +1,37 @@
+name: Download, Validate, Process CSV, and Push File
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '1,16,31,46 * * * *'  # Run when minute is 1,16,31 or 46
+jobs:
+  process_csv:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          repository: 'RamVasuthevan/city-of-toronto-toronto-island-ferry-ticket-counts'
+          path: city-of-toronto-toronto-island-ferry-ticket-counts
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref || 'main' }}
+
+      - name: Download File
+        run: |
+          curl -o toronto_island_ferry_ticket_counts.csv https://ckan0.cf.opendata.inter.prod-toronto.ca/dataset/toronto-island-ferry-ticket-counts/resource/c46719f5-8006-44e1-8b1e-5ad90bb9f6f4/download/Toronto%20Island%20Ferry%20Ticket%20Counts.csv
+        working-directory: city-of-toronto-toronto-island-ferry-ticket-counts
+
+      - name: Commit and Push if Files Changed
+        run: |
+          cd city-of-toronto-toronto-island-ferry-ticket-counts
+          git config user.name "Automated"
+          git config user.email "actions@users.noreply.github.com"
+          git add toronto_island_ferry_ticket_counts.csv
+          timestamp=$(date -u)
+          # Extract branch name from github.ref, assuming it's in refs/heads/branch_name format
+          branch_name=$(echo $GITHUB_REF | sed -e "s/^refs\/heads\///")
+          git commit -m "Processed and updated CSV: ${timestamp}, commit: ${{github.sha}}" || exit 0
+          # Push to the dynamically determined branch name
+          git push origin HEAD:$branch_name --force
+        env:
+          GITHUB_REF: ${{ github.ref }}
+      
