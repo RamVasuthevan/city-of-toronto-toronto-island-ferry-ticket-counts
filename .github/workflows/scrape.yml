@@ -1,4 +1,4 @@
-name: Download, Validate, Process CSV, and Push File
+name: Download and Commit File
 
 on:
   workflow_dispatch:
