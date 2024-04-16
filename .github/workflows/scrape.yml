@@ -20,6 +20,23 @@ jobs:
           curl -o toronto_island_ferry_ticket_counts.csv https://ckan0.cf.opendata.inter.prod-toronto.ca/dataset/toronto-island-ferry-ticket-counts/resource/c46719f5-8006-44e1-8b1e-5ad90bb9f6f4/download/Toronto%20Island%20Ferry%20Ticket%20Counts.csv
         working-directory: city-of-toronto-toronto-island-ferry-ticket-counts
 
+      - name: Validate CSV Header
+        run: |
+          expected_header="_id,Timestamp,Redemption Count,Sales Count"
+          actual_header=$(head -n 1 toronto_island_ferry_ticket_counts.csv | tr -d '\r')
+          if [ "$actual_header" != "$expected_header" ]; then
+            echo "CSV header does not match the expected header."
+            echo "Expected: $expected_header"
+            echo "Found: $actual_header"
+            exit 1
+          fi
+        working-directory: city-of-toronto-toronto-island-ferry-ticket-counts
+
+      - name: Process CSV File (Remove _id Column)
+        run: |
+          awk -F',' 'BEGIN {OFS=","} {if(NR==1){for (i=2; i<=NF; i++) printf "%s%s", $i, (i<NF ? OFS : ORS)} else {for (i=2; i<=NF; i++) printf "%s%s", $i, (i<NF ? OFS : ORS)}}' toronto_island_ferry_ticket_counts.csv > temp.csv && mv temp.csv toronto_island_ferry_ticket_counts.csv
+        working-directory: city-of-toronto-toronto-island-ferry-ticket-counts
+
       - name: Commit and Push if Files Changed
         run: |
           cd city-of-toronto-toronto-island-ferry-ticket-counts
