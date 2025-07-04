@@ -3,7 +3,7 @@ name: Download and Commit File
 on:
   workflow_dispatch:
   schedule:
-    - cron: '1,16,31,46 * * * *'  # Run when minute is 1,16,31 or 46
+    - cron: '0 0 * * *'  # Run everyday at 00:00
 jobs:
   process_csv:
     runs-on: ubuntu-latest
