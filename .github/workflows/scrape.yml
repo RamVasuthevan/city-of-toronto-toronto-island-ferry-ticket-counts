@@ -17,7 +17,7 @@ jobs:
 
       - name: Download File
         run: |
-          curl -o toronto_island_ferry_ticket_counts.csv https://ckan0.cf.opendata.inter.prod-toronto.ca/dataset/toronto-island-ferry-ticket-counts/resource/c46719f5-8006-44e1-8b1e-5ad90bb9f6f4/download/Toronto%20Island%20Ferry%20Ticket%20Counts.csv
+          curl -o toronto_island_ferry_ticket_counts.csv https://ckan0.cf.opendata.inter.prod-toronto.ca/dataset/000ec8ae-1231-49ca-b6f8-6eb35b74a7ee/resource/6c8e7ce0-1961-4c11-ba89-9db5deda88c0/download/toronto-island-ferry-ticket-counts.csv
         working-directory: city-of-toronto-toronto-island-ferry-ticket-counts
 
       - name: Validate CSV Header
